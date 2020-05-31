@@ -1,0 +1,11 @@
+{
+  "name": "@marko/expo-app-snackbar",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "peerDependencies": {
+    "react": ">=16.9.0",
+    "react-sweet-state": ">=2.3.0",
+    "react-native-paper": ">=3.10.1",
+    "styled-components": ">=5.1.1"
+  }
+}
