@@ -9,7 +9,8 @@ export const APP_SNACKBAR_POSITION = {
 };
 
 export const APP_SNACKBAR_DURATION = {
-    short: 2000
+    short: 2000,
+    medium: 3000
 };
 
 const Store = createStore({
