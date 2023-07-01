@@ -2,6 +2,11 @@ import {
     createStore,
     createHook
 } from 'react-sweet-state';
+import {
+    initialState,
+    actions,
+    selector
+} from '@codexporer.io/expo-link-stores';
 
 export const APP_SNACKBAR_POSITION = {
     top: 'top',
@@ -16,12 +21,14 @@ export const APP_SNACKBAR_DURATION = {
 
 const Store = createStore({
     initialState: {
+        ...initialState,
         isVisible: false,
         message: '',
         duration: undefined,
         position: APP_SNACKBAR_POSITION.bottom
     },
     actions: {
+        ...actions,
         show: ({
             message,
             duration,
@@ -39,6 +46,6 @@ const Store = createStore({
     name: 'AppSnackbar'
 });
 
-export const useAppSnackbar = createHook(Store);
+export const useAppSnackbar = createHook(Store, { selector: state => selector(state) });
 
 export const useAppSnackbarActions = createHook(Store, { selector: null });
