@@ -1,13 +1,13 @@
 {
   "name": "@codexporer.io/expo-app-snackbar",
   "version": "1.0.0",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "peerDependencies": {
     "react": "*",
+    "react-native": "*",
     "react-sweet-state": "*",
-    "react-native-paper": "*",
-    "styled-components": "*",
     "@codexporer.io/expo-link-stores": "*",
+    "@codexporer.io/expo-app-theme": "*",
     "react-native-safe-area-context": "*"
   }
 }
