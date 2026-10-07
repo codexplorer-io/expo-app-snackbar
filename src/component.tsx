@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
         zIndex: 9999
     },
     positionTop: {
-        top: 120
+        top: 50
     },
     positionBottom: {
         bottom: 50
