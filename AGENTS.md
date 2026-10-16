@@ -1,17 +1,29 @@
 # AGENTS.md — `@codexporer.io/expo-app-snackbar`
 
 ## Package Overview
-Global singleton snackbar notification system powered by `react-sweet-state`, `@codexporer.io/expo-portal`, and `@codexporer.io/expo-app-theme`.
+Global singleton snackbar notification system powered by `react-sweet-state`, `@codexporer.io/expo-link-stores`, `@codexporer.io/expo-app-theme`, and `react-native-safe-area-context`.
+
+## Peer Dependencies
+All of the following are required peer dependencies:
+- `react`: `*`
+- `react-native`: `*`
+- `react-sweet-state`: `*`
+- `@codexporer.io/expo-link-stores`: `*`
+- `@codexporer.io/expo-app-theme`: `*`
+- `react-native-safe-area-context`: `*`
 
 ## Key Exports
-- `AppSnackbar`: Root component displaying the animated toast overlay.
-- `useAppSnackbarActions()`: Hook returning `[, { show, hide }]`.
-- `useAppSnackbar()`: Hook returning state `[{ isVisible, message, position, duration }]`.
+- `AppSnackbar`: Root component rendering the animated toast overlay (renders `null` when hidden).
+- `useAppSnackbarActions()`: Hook returning `[null, { show, hide }]` with `selector: null` (no re-renders on state changes).
+- `useAppSnackbar()`: Hook returning `[state, { show, hide }]` where state contains `{ isVisible, message, position, duration }`.
 - `APP_SNACKBAR_POSITION`: Constants `{ top: 'top', bottom: 'bottom' }`.
 - `APP_SNACKBAR_DURATION`: Constants `{ short: 2000, medium: 3000, long: 5000 }`.
+- Types: `AppSnackbarPosition`, `AppSnackbarDuration`, `AppSnackbarState`, `ShowSnackbarOptions`.
 
 ## Critical Guidelines for AI Agents
-- **Root Mounting**: Mount `<AppSnackbar />` once inside `ThemeProvider` at the root layout.
-- **Destructure Actions**: Use `const [, { show: showSnackbar, hide: hideSnackbar }] = useAppSnackbarActions();`.
-- **Use Duration Constants**: Prefer `APP_SNACKBAR_DURATION.short` (2s) or `APP_SNACKBAR_DURATION.medium` (3s) instead of hardcoding raw millisecond numbers.
-- **Dynamic Theming**: The snackbar automatically derives colors and shadows from `useAppTheme()`. Do not pass color props manually.
+- **Root Mounting & Theming**: Mount `<AppSnackbar />` once near the root layout inside `<AppThemeProvider>` (and `<SafeAreaProvider>`) so that `useAppTheme()` can apply the active theme and safe area insets are properly calculated. `<AppSnackbar />` MUST be a descendant of `<AppThemeProvider>`.
+- **Dispatching Actions**: Always use `const [, { show, hide }] = useAppSnackbarActions();`. Do NOT use `useAppSnackbar()` if you only need to trigger snackbars, to prevent unwanted re-renders.
+- **Default Values**: If `duration` is omitted in `show({ message })`, it defaults to `APP_SNACKBAR_DURATION.medium` (3000ms). If `position` is omitted, it defaults to `APP_SNACKBAR_POSITION.bottom`.
+- **Use Duration Constants**: Prefer using `APP_SNACKBAR_DURATION.short` (2000), `.medium` (3000), or `.long` (5000) instead of hardcoding numbers.
+- **Dynamic Theming**: The snackbar automatically derives colors and shadows from `useAppTheme()` (`surfaceSecondary`, `border`, `text`, `placeholder`, `shadow`).
+- **Store Linking**: The store is named `'AppSnackbar'` and integrates `linkInitialState`, `linkActions`, and `linkSelector` from `@codexporer.io/expo-link-stores` for cross-store linking.

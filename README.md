@@ -1,44 +1,55 @@
 # `@codexporer.io/expo-app-snackbar`
 
-A lightweight, theme-aware snackbar notification component for React Native and Expo applications, dismissable through an "X" button.
+A lightweight, theme-aware global snackbar/toast notification overlay for React Native and Expo applications, dismissable through an "✕" button or auto-dismiss timer. Backed by `react-sweet-state` and `@codexporer.io/expo-link-stores`.
 
-## Installation & Peer Dependencies
+---
+
+## Peer Dependencies
+
+All of the following peer dependencies must be installed in the consuming project:
+- `react`: `*`
+- `react-native`: `*`
+- `react-sweet-state`: `*`
+- `@codexporer.io/expo-link-stores`: `*`
+- `@codexporer.io/expo-app-theme`: `*`
+- `react-native-safe-area-context`: `*`
+
+---
+
+## Installation
 
 ```bash
 yarn add @codexporer.io/expo-app-snackbar
 ```
 
-Peer dependencies:
-- `react` (`*`)
-- `react-native` (`*`)
-- `react-sweet-state` (`*`)
-- `@codexporer.io/expo-link-stores` (`*`)
-- `@codexporer.io/expo-app-theme` (`*`)
-- `react-native-safe-area-context` (`*`)
+---
 
 ## Quick Start
 
-### 1. Place `AppSnackbar` at the root of your application
+### 1. Mount `AppSnackbar` at the Root Layout
 
-Place `<AppSnackbar />` at the root inside your `<AppThemeProvider>` (typically at the end of the root children so it floats on top of all other components):
+Mount `<AppSnackbar />` once near the root of your application inside `SafeAreaProvider` (typically alongside your screens so it floats on top of the UI):
 
 ```tsx
 import React from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AppThemeProvider } from '@codexporer.io/expo-app-theme';
 import { AppSnackbar } from '@codexporer.io/expo-app-snackbar';
-import { AppThemeProvider } from '@photo-glide-frontend/app-theme';
-import { AppScreensContainer } from './AppScreensContainer';
+import { NavigationRoot } from './NavigationRoot';
 
 export function App() {
   return (
-    <AppThemeProvider>
-      <AppScreensContainer />
-      <AppSnackbar />
-    </AppThemeProvider>
+    <SafeAreaProvider>
+      <AppThemeProvider>
+        <NavigationRoot />
+        <AppSnackbar />
+      </AppThemeProvider>
+    </SafeAreaProvider>
   );
 }
 ```
 
-### 2. Trigger snackbars from anywhere in your app
+### 2. Trigger Snackbars from Any Component
 
 ```tsx
 import React from 'react';
@@ -68,22 +79,32 @@ export function MyScreen() {
 }
 ```
 
+---
+
 ## Features
 
-- **Root Singleton**: Mount once at the root; dispatch from anywhere with a hook.
-- **Early Dismissal**: Users can dismiss the snackbar immediately before timeout via the "✕" button.
-- **Theme Integration**: All colors (background, borders, text, close icon, shadows) are dynamically derived from `useAppTheme()`.
-- **Smooth Animations**: Animated fade and slide transitions on mount and dismissal.
+- **Root Singleton**: Mount once at the root; dispatch from anywhere with `useAppSnackbarActions()`.
+- **Early Dismissal**: Users can dismiss the notification immediately via the "✕" touchable button (`hitSlop: 12`).
+- **Theme Integration**: Automatically extracts colors (`surfaceSecondary`, `border`, `text`, `placeholder`, `shadow`) from `useAppTheme()`.
+- **Smooth Animations**: Animated fade (`250ms` in / `200ms` out) and slide transitions (`16px` offset) with native driver.
+- **Auto-Dismiss**: Clears automatically after `duration` (defaults to `APP_SNACKBAR_DURATION.medium` / 3000ms).
+
+---
 
 ## API Reference
 
-### `show(options)` Options
+### Component
 
-| Property | Type | Default | Description |
+#### `<AppSnackbar />`
+Renders the animated snackbar overlay. Renders `null` when `isVisible` is `false`.
+
+### `show(options: ShowSnackbarOptions)`
+
+| Option | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `message` | `string` | `''` | Message to display inside the snackbar |
-| `position` | `'top' \| 'bottom'` | `'bottom'` | Position on screen |
-| `duration` | `number` | `3000` | Auto-dismiss duration in milliseconds |
+| `message` | `string` | *Required* | Message text displayed in the snackbar (supports up to 4 lines) |
+| `position` | `'top' \| 'bottom'` | `'bottom'` | Screen edge positioning (`APP_SNACKBAR_POSITION.top` or `APP_SNACKBAR_POSITION.bottom`) |
+| `duration` | `number` | `3000` | Auto-dismiss duration in milliseconds (defaults to `APP_SNACKBAR_DURATION.medium`) |
 
 ### Constants
 
@@ -94,6 +115,20 @@ export function MyScreen() {
   - `short: 2000`
   - `medium: 3000`
   - `long: 5000`
+
+### Hooks
+
+- **`useAppSnackbarActions()`**: Returns `[null, { show, hide }]`. Does not subscribe to state changes, preventing unnecessary component re-renders.
+- **`useAppSnackbar()`**: Returns `[state, { show, hide }]` where `state` has shape `{ isVisible: boolean, message: string, position: 'top' | 'bottom', duration?: number }`.
+
+### Exported Types
+
+- `AppSnackbarPosition`: `'top' | 'bottom'`
+- `AppSnackbarDuration`: `2000 | 3000 | 5000`
+- `AppSnackbarState`: `{ isVisible: boolean; message: string; duration?: number; position: AppSnackbarPosition; [key: string]: unknown }`
+- `ShowSnackbarOptions`: `{ message: string; duration?: number; position?: AppSnackbarPosition }`
+
+---
 
 ## License
 
